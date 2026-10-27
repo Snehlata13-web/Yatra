@@ -1,7 +1,33 @@
 {
+  "name": "yatra",
+  "version": "1.0.0",
+  "description": "Hostel pass-management application",
+  "main": "server/src/app.js",
+  "scripts": {
+    "start": "npm --prefix server start",
+    "dev": "npm --prefix server run dev",
+    "test": "npm --prefix server test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Snehlata13-web/Yatra.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Snehlata13-web/Yatra/issues"
+  },
+  "homepage": "https://github.com/Snehlata13-web/Yatra#readme",
   "dependencies": {
-    "@supabase/supabase-js": "^2.115.0",
-    "bcrypt": "^6.0.0",
-    "dotenv": "^17.4.2"
+    "@supabase/supabase-js": "^2.117.2",
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^18.0.6",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
   }
 }

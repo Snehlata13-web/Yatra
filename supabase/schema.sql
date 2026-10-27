@@ -1,0 +1,1 @@
+-- Database schema is managed in Supabase; no schema definition is checked in yet.
