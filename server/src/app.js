@@ -15,6 +15,7 @@ const helpdeskRoutes = require('./modules/helpdesk/helpdesk.routes.js');
 const { apiRateLimiter } = require('./middleware/rate-limit.middleware.js');
 const { logger } = require('./utils/logger.js');
 const app = express();
+app.set('trust proxy', 1);
 const port = process.env.PORT || 3000;
 
 const allowedOrigins = (process.env.FRONTEND_ORIGIN || 'http://localhost:5173')
