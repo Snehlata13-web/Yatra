@@ -1,5 +1,14 @@
 const wardenModel = require('./warden.model');
 
+const getPendingStudentRegistrations = () => wardenModel.getPendingStudentRegistrations();
+
+const decideStudentRegistration = async (userId, approvalStatus) => {
+    if (!['approved', 'rejected'].includes(approvalStatus)) {
+        throw new Error('Approval status must be approved or rejected');
+    }
+    return wardenModel.decideStudentRegistration(userId, approvalStatus);
+};
+
 const approvePass = async (id, decision = 'approved') => {
     const approval = await wardenModel.approvePass(id, decision);
     if (!approval) {
@@ -54,6 +63,8 @@ const getPassById = async (id) => {
 }
 
 module.exports = {
+    getPendingStudentRegistrations,
+    decideStudentRegistration,
     approvePass,
     getCurrentWarden,
     getPendingApprovals,

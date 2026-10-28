@@ -29,11 +29,82 @@ const register = async (userData) => {
         password_hash: passwordHash,
         is_active: true
     });
-    const approvalStatus = requestedRole === "student" ? "approved" : "pending";
+    const approvalStatus = 'pending';
+    let roleAssigned = false;
     try {
         await authModel.assignRole(user.id, role.id, approvalStatus);
+        roleAssigned = true;
+        if (requestedRole === "student") {
+            const {
+                roll_number,
+                admission_number,
+                college_email,
+                branch,
+                academic_year,
+                room_number,
+                block_no,
+                batch,
+                course
+            } = userData;
+            await authModel.createStudentProfile({
+                user_id: user.id,
+                roll_number,
+                admission_number,
+                college_email,
+                branch,
+                academic_year,
+                room_number,
+                block_no,
+                batch,
+                course
+            });
+        } else if (requestedRole === "warden") {
+            const { employee_id, phone_number, hostel_block } = userData;
+            await authModel.createWardenProfile({
+                user_id: user.id,
+                employee_id,
+                phone_number,
+                hostel_block
+            });
+        } else if (requestedRole === "guard") {
+            const { employee_id, gate_number } = userData;
+            await authModel.createGuardProfile({
+                user_id: user.id,
+                employee_id,
+                gate_number
+            });
+        }
     } catch (error) {
-        await authModel.deleteUser(user.id).catch(() => {});
+        const cleanupErrors = [];
+        const deleteProfile = requestedRole === 'student'
+            ? authModel.deleteStudentProfile
+            : requestedRole === 'warden' ? authModel.deleteWardenProfile
+                : requestedRole === 'guard' ? authModel.deleteGuardProfile : null;
+        if (deleteProfile) {
+            try {
+                await deleteProfile(user.id);
+            } catch (cleanupError) {
+                cleanupErrors.push(cleanupError);
+            }
+        }
+        if (roleAssigned) {
+            try {
+                await authModel.deleteUserRole(user.id);
+            } catch (cleanupError) {
+                cleanupErrors.push(cleanupError);
+            }
+        }
+        try {
+            await authModel.deleteUser(user.id);
+        } catch (cleanupError) {
+            cleanupErrors.push(cleanupError);
+        }
+        if (cleanupErrors.length) {
+            const rollbackError = new Error('Registration failed and account cleanup could not be completed');
+            rollbackError.statusCode = 500;
+            rollbackError.cause = new AggregateError([error, ...cleanupErrors]);
+            throw rollbackError;
+        }
         throw error;
     }
     delete user.password_hash;
@@ -63,8 +134,11 @@ const login = async (email, password) => {
     if (!role) {
         throw new Error("User role not found");
     }
+    if (role.approval_status === 'rejected') {
+        throw new Error('Your account registration was rejected');
+    }
     if (role.approval_status !== "approved") {
-        throw new Error("Your account is waiting for admin approval");
+        throw new Error("Your account is waiting for approval");
     }
     const token = jwt.sign(
         {

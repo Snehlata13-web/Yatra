@@ -1,5 +1,79 @@
 const { supabase } = require('../../config/db');
 
+const getPendingStudentRegistrations = async () => {
+    const { data: studentRole, error: roleError } = await supabase
+        .from('roles')
+        .select('id')
+        .ilike('name', 'student')
+        .maybeSingle();
+
+    if (roleError) throw roleError;
+    if (!studentRole) return [];
+
+    const { data: pendingRoles, error: pendingRolesError } = await supabase
+        .from('user_roles')
+        .select('user_id')
+        .eq('role_id', studentRole.id)
+        .eq('approval_status', 'pending');
+
+    if (pendingRolesError) throw pendingRolesError;
+    if (!pendingRoles || pendingRoles.length === 0) return [];
+
+    const userIds = pendingRoles.map(({ user_id }) => user_id);
+    const [{ data: users, error: usersError }, { data: students, error: studentsError }] = await Promise.all([
+        supabase
+            .from('users')
+            .select('id, name, email, phone')
+            .in('id', userIds),
+        supabase
+            .from('students')
+            .select('user_id, roll_number, admission_number, college_email, branch, academic_year, room_number, block_no, batch, course')
+            .in('user_id', userIds)
+    ]);
+
+    if (usersError) throw usersError;
+    if (studentsError) throw studentsError;
+
+    const studentByUserId = new Map((students || []).map((student) => [String(student.user_id), student]));
+    return (users || []).map((user) => ({
+        ...user,
+        student: studentByUserId.get(String(user.id)) || null,
+        approval_status: 'pending'
+    }));
+};
+
+const decideStudentRegistration = async (userId, approvalStatus) => {
+    const { data: studentRole, error: roleError } = await supabase
+        .from('roles')
+        .select('id')
+        .ilike('name', 'student')
+        .maybeSingle();
+
+    if (roleError) throw roleError;
+    if (!studentRole) {
+        const error = new Error('Student role not found');
+        error.statusCode = 404;
+        throw error;
+    }
+
+    const { data, error } = await supabase
+        .from('user_roles')
+        .update({ approval_status: approvalStatus })
+        .eq('user_id', userId)
+        .eq('role_id', studentRole.id)
+        .eq('approval_status', 'pending')
+        .select('user_id, role_id, approval_status')
+        .maybeSingle();
+
+    if (error) throw error;
+    if (!data) {
+        const notPendingError = new Error('Pending student registration not found');
+        notPendingError.statusCode = 404;
+        throw notPendingError;
+    }
+    return data;
+};
+
 const approvePass = async (passId, decision) => {
     const { data, error } = await supabase
         .from('pass_approvals')
@@ -131,6 +205,8 @@ const getPassById = async (passId) => {
 }
 
 module.exports = {
+    getPendingStudentRegistrations,
+    decideStudentRegistration,
     approvePass,
     getCurrentWarden,
     getPendingApprovals,

@@ -3,10 +3,15 @@ const wardenController = require('./warden.controller');
 const { authorize } = require('../../middleware/role.middleware');
 const { authenticate } = require('../../middleware/auth.middleware');
 const wardenValidation = require('./warden.validation');
+const adminValidation = require('../admins/admin.validation');
 
 const router = express.Router();
 
 router.use(authenticate);
+router.get('/students/pending', authorize('warden'), wardenController.getPendingStudentRegistrations);
+router.patch('/students/:userId/approval', authorize('warden'),
+    wardenValidation.validateUserId, adminValidation.validateApprovalStatus,
+    wardenController.decideStudentRegistration);
 router.put('/approve/:id', authorize('warden'), wardenValidation.validatePassId,
     wardenValidation.validateApprovalDecision, wardenController.approvePass);
 router.put('/reject/:id', authorize('warden'), wardenValidation.validatePassId,

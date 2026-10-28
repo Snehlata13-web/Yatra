@@ -1,6 +1,6 @@
 # Yatra
 
-Yatra is a hostel pass-management backend built with Node.js, Express, and Supabase. It includes authentication and role-based API modules for students, wardens, guards, approvals, passes, complaints, food reviews, and helpdesk requests.
+Yatra is a hostel pass-management backend built with Node.js, Express, and Supabase. It includes authentication and role-based API modules for students, wardens, guards, approvals, passes, complaints, food reviews, and notices.
 
 ## Requirements
 
@@ -31,9 +31,40 @@ Routes are mounted under `/api/v1`:
 - `/auth` — registration and login
 - `/users`, `/students`, `/admin` — user, student, and admin operations
 - `/passes`, `/approvals`, `/wardens`, `/guards` — pass approvals and gate workflow
-- `/complaints`, `/food`, `/helpdesk` — supporting student services
+- `/complaints`, `/food`, `/notices` — supporting student services and warden announcements
 
 Most endpoints require a bearer token from `/auth/login`. Endpoints also enforce role authorization; see the route files under `server/src/modules/` for exact methods, paths, and role access.
+
+### Student registration
+
+`POST /api/v1/auth/register` with `role: "student"` creates the common user, assigns the student role, and creates the related `students` profile. The request must include the profile columns shown in the Supabase schema:
+
+```json
+{
+  "name": "Asha Sharma",
+  "email": "asha@example.com",
+  "password": "StrongPass123",
+  "phone": "+61412345678",
+  "role": "student",
+  "roll_number": "1234567890123",
+  "admission_number": "ADM-2026-001",
+  "college_email": "asha@college.edu",
+  "branch": "CSE",
+  "academic_year": 2,
+  "room_number": "101",
+  "block_no": "A",
+  "batch": "2025-2029",
+  "course": "B.Tech"
+}
+```
+
+Non-student registration uses only the common account fields. If profile creation fails, registration attempts to remove the newly created role assignment and user; database-level uniqueness constraints remain necessary for duplicate protection.
+
+New student registrations remain pending until a warden approves them. An authenticated warden can review `GET /api/v1/wardens/students/pending` and approve or reject with `PATCH /api/v1/wardens/students/:userId/approval` and `{"approval_status":"approved"}` or `{"approval_status":"rejected"}`. Login is blocked until approval.
+
+Warden registration must also include `employee_id`, `phone_number`, and `hostel_block`. The phone number must use the same international format as the account phone. These values are saved in the related `wardens` profile.
+
+Guard registration must include `employee_id` and `gate_number`; these values are saved in the related `guards` profile. Warden and guard accounts remain pending admin approval.
 
 ## Environment and security
 

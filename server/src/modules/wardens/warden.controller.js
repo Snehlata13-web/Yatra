@@ -1,5 +1,26 @@
 const wardenService = require('./warden.service');
 
+const getPendingStudentRegistrations = async (req, res) => {
+    try {
+        const registrations = await wardenService.getPendingStudentRegistrations();
+        res.status(200).json({ success: true, data: registrations });
+    } catch (error) {
+        res.status(error.statusCode || 500).json({ success: false, message: error.message });
+    }
+};
+
+const decideStudentRegistration = async (req, res) => {
+    try {
+        const result = await wardenService.decideStudentRegistration(
+            req.params.userId,
+            req.body.approval_status
+        );
+        res.status(200).json({ success: true, data: result });
+    } catch (error) {
+        res.status(error.statusCode || 500).json({ success: false, message: error.message });
+    }
+};
+
 const approvePass = async (req, res) => {
     try {
         const pass = await wardenService.approvePass(
@@ -146,6 +167,8 @@ const getAllPasses = async (req, res) => {
 }
 
 module.exports = {
+    getPendingStudentRegistrations,
+    decideStudentRegistration,
     approvePass,
     getAllPasses,
     getPassById,

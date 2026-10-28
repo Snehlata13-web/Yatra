@@ -11,7 +11,7 @@ const guardRoutes = require('./modules/guards/guard.routes.js');
 const wardenRoutes = require('./modules/wardens/warden.routes.js');
 const approvalRoutes = require('./modules/approvals/approval.routes.js');
 const foodRoutes = require('./modules/food/food.routes.js');
-const helpdeskRoutes = require('./modules/helpdesk/helpdesk.routes.js');
+const noticeRoutes = require('./modules/notices/notice.routes.js');
 const { apiRateLimiter } = require('./middleware/rate-limit.middleware.js');
 const { logger } = require('./utils/logger.js');
 const app = express();
@@ -52,7 +52,7 @@ app.use('/api/v1/guards', guardRoutes);
 app.use('/api/v1/wardens', wardenRoutes);
 app.use('/api/v1/approvals', approvalRoutes);
 app.use('/api/v1/food', foodRoutes);
-app.use('/api/v1/helpdesk', helpdeskRoutes);
+app.use('/api/v1/notices', noticeRoutes);
 
 
 app.listen(port, () => {

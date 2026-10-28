@@ -13,6 +13,24 @@ Configure the local `.env` with a non-production Supabase project URL and publis
 
 The API listens on `PORT` (default `3000`). `GET /health` returns a basic readiness response without exposing configuration or database details.
 
+Student registration at `POST /api/v1/auth/register` also requires `roll_number`, `admission_number`, `college_email`, `branch`, integer `academic_year`, `room_number`, `block_no`, `batch`, and `course`. These values are validated and saved to the `students` row linked to the new `users.id`.
+
+Student accounts start with `approval_status: pending`; warden approval is required before login. Wardens list requests with `GET /api/v1/wardens/students/pending` and decide using `PATCH /api/v1/wardens/students/:userId/approval` with `{"approval_status":"approved"}` or `{"approval_status":"rejected"}`.
+
+## Warden notices
+
+Apply `supabase/migrations/20261028_create_notices.sql` to create the notices table and the private `warden-notices` Storage bucket. Configure `SUPABASE_SERVICE_ROLE_KEY` only in the backend environment (never in a frontend build or Git); the API uses it to create upload/download signed URLs. The frontend uploads media with Supabase Storage `uploadToSignedUrl(path, token, file)` and then creates a notice referencing the returned path.
+
+- `POST /api/v1/notices/uploads/sign` — warden-only; request `{ "file_name": "poster.png", "content_type": "image/png", "file_size": 1024 }`
+- `POST /api/v1/notices` — warden-only; request `{ "title": "Notice title", "body": "Notice text", "media": [{ "path": "<signed-upload-path>", "content_type": "image/png" }] }`
+- `GET /api/v1/notices` and `GET /api/v1/notices/:id` — approved student/warden access; media is returned as private signed URLs valid for one hour.
+
+At most five attachments are accepted. Images are limited to 10 MB each; videos to 50 MB each. Supported MIME types are JPEG, PNG, WebP, GIF, MP4, WebM, and QuickTime. This checkout has no React client, so the endpoints are ready for a frontend but no warden notice screen is included here.
+
+Warden registration additionally requires `employee_id`, `phone_number`, and `hostel_block`; these values are validated and saved to the related `wardens` row.
+
+Guard registration additionally requires `employee_id` and `gate_number`; these values are validated and saved to the related `guards` row. Staff accounts stay pending until admin approval.
+
 ## EC2 deployment (Docker Compose)
 
 The deployment files run the API in a non-root Node 22 container and bind it only to `127.0.0.1:3000` on the EC2 host. Put Nginx in front of it for public HTTPS access; do not expose port 3000 in the EC2 security group.

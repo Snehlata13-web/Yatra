@@ -88,6 +88,68 @@ const assignRole = async (userId, roleId, approvalStatus) => {
     return data;
 };
 
+const createStudentProfile = async (studentData) => {
+    const { data, error } = await supabase
+        .from('students')
+        .insert(studentData)
+        .select()
+        .single();
+
+    if (error) {
+        if (error.code === '23505') error.statusCode = 409;
+        throw error;
+    }
+    return data;
+};
+
+const deleteStudentProfile = async (userId) => {
+    const { error } = await supabase.from('students').delete().eq('user_id', userId);
+    if (error) throw error;
+};
+
+const createWardenProfile = async (wardenData) => {
+    const { data, error } = await supabase
+        .from('wardens')
+        .insert(wardenData)
+        .select()
+        .single();
+
+    if (error) {
+        if (error.code === '23505') error.statusCode = 409;
+        throw error;
+    }
+    return data;
+};
+
+const deleteWardenProfile = async (userId) => {
+    const { error } = await supabase.from('wardens').delete().eq('user_id', userId);
+    if (error) throw error;
+};
+
+const createGuardProfile = async (guardData) => {
+    const { data, error } = await supabase
+        .from('guards')
+        .insert(guardData)
+        .select()
+        .single();
+
+    if (error) {
+        if (error.code === '23505') error.statusCode = 409;
+        throw error;
+    }
+    return data;
+};
+
+const deleteGuardProfile = async (userId) => {
+    const { error } = await supabase.from('guards').delete().eq('user_id', userId);
+    if (error) throw error;
+};
+
+const deleteUserRole = async (userId) => {
+    const { error } = await supabase.from('user_roles').delete().eq('user_id', userId);
+    if (error) throw error;
+};
+
 const deleteUser = async (userId) => {
     const { error } = await supabase.from('users').delete().eq('id', userId);
     if (error) throw error;
@@ -99,5 +161,12 @@ module.exports = {
     createUser,
     findRoleByName,
     assignRole,
+    createStudentProfile,
+    deleteStudentProfile,
+    createWardenProfile,
+    deleteWardenProfile,
+    createGuardProfile,
+    deleteGuardProfile,
+    deleteUserRole,
     deleteUser
 };
