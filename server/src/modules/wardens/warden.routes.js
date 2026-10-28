@@ -8,11 +8,11 @@ const adminValidation = require('../admins/admin.validation');
 const router = express.Router();
 
 router.use(authenticate);
-router.get('/students/pending', authorize('warden'), wardenController.getPendingStudentRegistrations);
-router.get('/students', authorize('warden'), wardenController.getStudentAccounts);
-router.delete('/students/:userId', authorize('warden'), wardenValidation.validateUserId,
+router.get('/students/pending', authorize('warden','admin'), wardenController.getPendingStudentRegistrations);
+router.get('/students', authorize('warden','admin'), wardenController.getStudentAccounts);
+router.delete('/students/:userId', authorize('warden','admin'), wardenValidation.validateUserId,
     wardenController.deleteStudentAccount);
-router.patch('/students/:userId/approval', authorize('warden'),
+router.patch('/students/:userId/approval', authorize('warden','admin'),
     wardenValidation.validateUserId, adminValidation.validateApprovalStatus,
     wardenController.decideStudentRegistration);
 router.put('/approve/:id', authorize('warden'), wardenValidation.validatePassId,

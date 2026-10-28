@@ -9,8 +9,8 @@ const router = express.Router();
 router.use(authenticate);
 router.post('/', authorize('student'), validation.validateCreate, complaintController.createComplaint);
 router.get('/me', authorize('student'), complaintController.getMyComplaints);
-router.get('/', authorize('warden'), validation.validateWardenFilter, complaintController.getWardenComplaints);
-router.get('/:id', authorize('student', 'warden'), validation.validateId, complaintController.getComplaint);
+router.get('/', authorize('warden','admin'), validation.validateWardenFilter, complaintController.getWardenComplaints);
+router.get('/:id', authorize('student', 'warden','admin'), validation.validateId, complaintController.getComplaint);
 router.patch('/:id/status', authorize('warden'), validation.validateId,
     validation.validateStatus, complaintController.updateStatus);
 router.patch('/:id/confirm', authorize('student'), validation.validateId, complaintController.confirmResolved);

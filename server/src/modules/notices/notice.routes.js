@@ -7,8 +7,8 @@ const { authorize } = require('../../middleware/role.middleware.js');
 const router = express.Router();
 
 router.use(authenticate);
-router.get('/', authorize('student', 'warden'), noticeController.getNotices);
-router.get('/:id', authorize('student', 'warden'),
+router.get('/', authorize('student', 'warden','admin'), noticeController.getNotices);
+router.get('/:id', authorize('student', 'warden','admin'),
     noticeValidation.validateNoticeId, noticeController.getNoticeById);
 router.post('/uploads/sign', authorize('warden'),
     noticeValidation.validateUpload, noticeController.signUpload);
