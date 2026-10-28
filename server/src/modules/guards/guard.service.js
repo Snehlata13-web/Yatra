@@ -26,8 +26,8 @@ const getCurrentGuard = async (id) => {
     return await guardModel.getCurrentGuard(id);
 }
 
-const updateGateStatus = async (id, action) => {
-    return guardModel.updateGateStatus(id, action);
+const updateGateStatus = async (id, action, guardUserId) => {
+    return guardModel.updateGateStatus(id, action, guardUserId);
 }
 
 const getGatePasses = () => guardModel.getGatePasses();

@@ -16,7 +16,7 @@ const approvePass = async (req, res) => {
 
 const updateGateStatus = async (req, res) => {
     try {
-        const pass = await guardService.updateGateStatus(req.params.id, req.body.action);
+        const pass = await guardService.updateGateStatus(req.params.id, req.body.action, req.user.id);
         res.status(200).json({ success: true, data: pass });
     } catch (error) {
         handleError(res, error);

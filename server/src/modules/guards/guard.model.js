@@ -60,7 +60,7 @@ const approvePass = async (id, approverId) => {
     return data[0];
 }
 
-const updateGateStatus = async (id, action) => {
+const updateGateStatus = async (id, action, guardUserId) => {
     const { data: pass, error: passError } = await supabase
         .from('passes')
         .select('id, status, current_stage')
@@ -110,9 +110,15 @@ const updateGateStatus = async (id, action) => {
         throw conflict;
     }
 
+    // Record the exact moment (and which guard) the student left / returned.
+    const now = new Date().toISOString();
+    const gateUpdate = action === 'OUT'
+        ? { current_stage: 'OUT', gate_out_at: now, gate_out_by: guardUserId || null }
+        : { current_stage: 'IN', gate_in_at: now, gate_in_by: guardUserId || null };
+
     const { data, error } = await supabase
         .from('passes')
-        .update({ current_stage: action })
+        .update(gateUpdate)
         .eq('id', id)
         .select()
         .single();
