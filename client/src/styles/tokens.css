@@ -1,0 +1,118 @@
+/* ==========================================================================
+   Yatra design tokens
+   Palette derived from GL Bajaj Institute (glbitm.org): heritage maroon-brown,
+   GL gold and copper, set on warm cream surfaces.
+   ========================================================================== */
+:root {
+  /* Brand — heritage brown */
+  --brown-950: #170b04;
+  --brown-900: #24120a;
+  --brown-850: #2e170b;
+  --brown-800: #3d1f0d;
+  --brown-700: #592106;
+  --brown-600: #6f390c;
+  --brown-500: #8a5530;
+
+  /* Copper (primary actions) */
+  --copper-700: #8f4218;
+  --copper-600: #a8501d;
+  --copper-500: #c8702a;
+  --copper-400: #e08a3c;
+  --copper-200: #f6d2b0;
+  --copper-100: #fbebdb;
+  --copper-50: #fdf5ec;
+
+  /* GL gold (highlight) */
+  --gold-600: #c99200;
+  --gold-500: #f0b100;
+  --gold-400: #f6c449;
+  --gold-300: #ffd879;
+  --gold-100: #fdf2d2;
+
+  /* Warm neutrals */
+  --cream-0: #fffdf9;
+  --cream-50: #fcf8f1;
+  --cream-100: #f6efe3;
+  --cream-200: #efe5d4;
+  --cream-300: #e4d6c0;
+  --line: #e9dfcf;
+  --line-strong: #d9cab3;
+
+  --ink-900: #23170e;
+  --ink-800: #33251a;
+  --ink-700: #4b3b2e;
+  --ink-600: #5e4e42;
+  --ink-500: #76665a;
+  --ink-400: #9a8b7e;
+  --ink-300: #bfb2a5;
+
+  /* Semantic */
+  --sage-700: #36603f;
+  --sage-600: #45734f;
+  --sage-500: #5f8f6c;
+  --sage-200: #cfe0d1;
+  --sage-100: #e7f0e7;
+
+  --red-700: #8c2f28;
+  --red-600: #a63d35;
+  --red-500: #b9524a;
+  --red-200: #efcac4;
+  --red-100: #f9e7e3;
+
+  --amber-700: #8a5d00;
+  --amber-100: #fdf0cc;
+  --blue-700: #335677;
+  --blue-100: #e3ecf4;
+  --plum-700: #73405f;
+  --plum-100: #f3e5ee;
+
+  /* Surfaces */
+  --bg: var(--cream-100);
+  --surface: var(--cream-0);
+  --surface-2: var(--cream-50);
+  --sidebar: var(--brown-900);
+
+  /* Type */
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-mono: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, monospace;
+
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.8125rem;
+  --fs-base: 0.9375rem;
+  --fs-md: 1.0625rem;
+  --fs-lg: 1.25rem;
+  --fs-xl: 1.625rem;
+  --fs-2xl: 2.125rem;
+  --fs-3xl: 2.75rem;
+
+  /* Radius */
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --r-xl: 18px;
+  --r-2xl: 24px;
+  --r-pill: 999px;
+
+  /* Elevation — warm, low-contrast shadows */
+  --sh-xs: 0 1px 2px rgba(61, 31, 13, 0.06);
+  --sh-sm: 0 1px 2px rgba(61, 31, 13, 0.05), 0 2px 8px rgba(61, 31, 13, 0.05);
+  --sh-md: 0 2px 4px rgba(61, 31, 13, 0.04), 0 10px 24px -6px rgba(61, 31, 13, 0.12);
+  --sh-lg: 0 6px 12px rgba(61, 31, 13, 0.06), 0 24px 48px -12px rgba(61, 31, 13, 0.22);
+  --sh-copper: 0 6px 18px -6px rgba(168, 80, 29, 0.55);
+
+  --ring: 0 0 0 3px var(--cream-0), 0 0 0 5px var(--gold-500);
+  --ring-inset: 0 0 0 3px rgba(240, 177, 0, 0.35);
+
+  /* Layout */
+  --sidebar-w: 272px;
+  --topbar-h: 68px;
+  --content-max: 1280px;
+
+  /* Motion */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --t-fast: 140ms;
+  --t-med: 240ms;
+  --t-slow: 420ms;
+}
