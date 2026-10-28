@@ -46,8 +46,8 @@ const getWardenComplaints = async (filters) => {
     const complaints = await complaintModel.getWardenComplaints(filters);
     return complaints.map((complaint) => ({
         id: complaint.id,
-        room_number: complaint.students && complaint.students.room_number,
-        block_number: complaint.students && complaint.students.block_number,
+        room_number: complaint.students && complaint.students.room_no,
+        block_number: complaint.students && complaint.students.block_no,
         category: complaint.category,
         problem_description: complaint.problem_description,
         status: complaint.status,
@@ -64,8 +64,8 @@ const getWardenComplaint = async (id) => {
     const complaint = await getComplaint(id);
     return {
         id: complaint.id,
-        room_number: complaint.students && complaint.students.room_number,
-        block_number: complaint.students && complaint.students.block_number,
+        room_number: complaint.students && complaint.students.room_no,
+        block_number: complaint.students && complaint.students.block_no,
         category: complaint.category,
         problem_title: complaint.problem_title,
         problem_description: complaint.problem_description,

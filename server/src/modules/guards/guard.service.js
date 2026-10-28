@@ -30,6 +30,8 @@ const updateGateStatus = async (id, action) => {
     return guardModel.updateGateStatus(id, action);
 }
 
+const getGatePasses = () => guardModel.getGatePasses();
+
 module.exports = {
     approvePass,
     getPassById,
@@ -38,5 +40,6 @@ module.exports = {
     getApprovedPasses,
     getRejectedPasses,
     getCurrentGuard,
-    updateGateStatus
+    updateGateStatus,
+    getGatePasses
 }

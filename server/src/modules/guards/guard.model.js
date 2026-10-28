@@ -1,4 +1,5 @@
 const { supabase } = require('../../config/db.js');
+const { attachStudentDetails } = require('../../utils/studentDetails.js');
 
 const ensureGuardApprovals = async () => {
     const { data: approvedPasses, error: passesError } = await supabase
@@ -98,6 +99,11 @@ const updateGateStatus = async (id, action) => {
         conflict.statusCode = 409;
         throw conflict;
     }
+    if (action === 'OUT' && currentStage === 'IN') {
+        const conflict = new Error('This pass has already been used — the student has returned');
+        conflict.statusCode = 409;
+        throw conflict;
+    }
     if (action === 'IN' && currentStage !== 'OUT') {
         const conflict = new Error('Pass must be marked OUT before it can be marked IN');
         conflict.statusCode = 409;
@@ -124,7 +130,7 @@ const getPassById = async (id) => {
     if (error) {
         throw new Error(error.message);
     }
-    return data;
+    return attachStudentDetails(data);
 }
 
 const getCurrentGuard = async (userId) => {
@@ -193,6 +199,39 @@ const getRejectedPasses = async()=>{
     return data;
 }
 
+// Every warden-approved pass the guard works with, in one call:
+// pass fields + guard_decision (pending/approved) + guard_verified + student details.
+const getGatePasses = async () => {
+    await ensureGuardApprovals();
+    const { data: approvals, error: approvalsError } = await supabase
+        .from('pass_approvals')
+        .select('pass_id, decision, decided_at')
+        .eq('stage', 'guard')
+        .in('decision', ['pending', 'approved']);
+    if (approvalsError) throw approvalsError;
+    if (!approvals || approvals.length === 0) return [];
+
+    const decisionByPassId = new Map(approvals.map((approval) => [String(approval.pass_id), approval]));
+    const { data: passes, error: passesError } = await supabase
+        .from('passes')
+        .select('*')
+        .eq('status', 'approved')
+        .in('id', approvals.map((approval) => approval.pass_id))
+        .order('departure_time', { ascending: true });
+    if (passesError) throw passesError;
+
+    const withStudents = await attachStudentDetails(passes || []);
+    return withStudents.map((pass) => {
+        const approval = decisionByPassId.get(String(pass.id));
+        return {
+            ...pass,
+            guard_decision: approval ? approval.decision : 'pending',
+            guard_verified: Boolean(approval && approval.decision === 'approved'),
+            guard_verified_at: approval ? approval.decided_at : null
+        };
+    });
+};
+
 module.exports = {
     approvePass,
     getPassById,
@@ -201,5 +240,6 @@ module.exports = {
     getPendingApprovals,
     getApprovedPasses,
     getRejectedPasses,
-    updateGateStatus
+    updateGateStatus,
+    getGatePasses
 }

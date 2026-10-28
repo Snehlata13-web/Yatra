@@ -90,7 +90,19 @@ const getCurrentGuard = async (req, res) => {
     }
 };
 
+const getGatePasses = async (req, res) => {
+    try {
+        res.status(200).json({
+            success: true,
+            data: await guardService.getGatePasses()
+        });
+    } catch (error) {
+        handleError(res, error);
+    }
+};
+
 module.exports = {
+    getGatePasses,
     approvePass,
     updateGateStatus,
     getPassById,

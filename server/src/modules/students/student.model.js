@@ -1,5 +1,9 @@
 const { supabase } = require('../../config/db.js');
 
+// API uses `room_number`; the students table column is `room_no`.
+const toColumns = ({ room_number, ...rest }) =>
+    room_number === undefined ? rest : { ...rest, room_no: room_number };
+
 const getStudentById = async (id) => {
     const { data, error } = await supabase
         .from('students')
@@ -17,7 +21,7 @@ const getStudentById = async (id) => {
 const updateStudentById = async (id, studentData) => {
     const { data, error } = await supabase
         .from('students')
-        .update(studentData)
+        .update(toColumns(studentData))
         .eq('id', id)
         .select()
         .single();
@@ -70,7 +74,7 @@ const getCurrentStudent = async (id) => {
 const updateCurrentStudent = async (userId, studentData) => {
     const { data, error } = await supabase
         .from('students')
-        .update(studentData)
+        .update(toColumns(studentData))
         .eq('user_id', userId)
         .select()
         .single();

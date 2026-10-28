@@ -11,6 +11,7 @@ router.put('/approve/:id', authorize('guard'), guardValidation.validateId,
     guardController.approvePass);
 router.patch('/:id/gate', authorize('guard'), guardValidation.validateId,
     guardValidation.validateGateAction, guardController.updateGateStatus);
+router.get('/passes', authorize('guard'), guardController.getGatePasses);
 router.get('/pending', authorize('guard'), guardController.getPendingApprovals);
 router.get('/approved', authorize('guard'), guardController.getApprovedPasses);
 router.get('/rejected', authorize('guard'), guardController.getRejectedPasses);

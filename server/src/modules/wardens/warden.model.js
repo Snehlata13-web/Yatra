@@ -27,14 +27,17 @@ const getPendingStudentRegistrations = async () => {
             .in('id', userIds),
         supabase
             .from('students')
-            .select('user_id, roll_number, admission_number, college_email, branch, academic_year, room_number, block_no, batch, course')
+            .select('user_id, roll_number, admission_number, college_email, branch, academic_year, room_no, block_no, batch, course')
             .in('user_id', userIds)
     ]);
 
     if (usersError) throw usersError;
     if (studentsError) throw studentsError;
 
-    const studentByUserId = new Map((students || []).map((student) => [String(student.user_id), student]));
+    const studentByUserId = new Map((students || []).map(({ room_no, ...student }) => [
+        String(student.user_id),
+        { ...student, room_number: room_no }
+    ]));
     return (users || []).map((user) => ({
         ...user,
         student: studentByUserId.get(String(user.id)) || null,

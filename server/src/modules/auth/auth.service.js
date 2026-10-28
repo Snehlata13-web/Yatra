@@ -41,7 +41,7 @@ const register = async (userData) => {
                 college_email,
                 branch,
                 academic_year,
-                room_number,
+                room_no: room_number,
                 block_no,
                 batch,
                 course

@@ -3,7 +3,7 @@ const { supabase } = require('../../config/db.js');
 const complaintSelect = `
     id, student_id, category, problem_title, problem_description,
     status, submitted_at, completed_at, resolved_at,
-    students!inner(room_number, block_number)
+    students!inner(room_no, block_no)
 `;
 
 const withConflictStatus = (error) => {
@@ -14,7 +14,7 @@ const withConflictStatus = (error) => {
 const getStudentByUserId = async (userId) => {
     const { data, error } = await supabase
         .from('students')
-        .select('id, room_number, block_number')
+        .select('id, room_no, block_no')
         .eq('user_id', userId)
         .maybeSingle();
     if (error) throw error;
@@ -58,7 +58,7 @@ const getWardenComplaints = async ({ category, status, room_number }) => {
         .order('submitted_at', { ascending: false });
     if (category) query = query.eq('category', category);
     if (status) query = query.eq('status', status);
-    if (room_number) query = query.eq('students.room_number', room_number);
+    if (room_number) query = query.eq('students.room_no', room_number);
     const { data, error } = await query;
     if (error) throw error;
     return data;
