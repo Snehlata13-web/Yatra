@@ -16,7 +16,13 @@ const getNoticeById = async (id) => {
     return notice;
 };
 
+const updateNotice = (id, wardenUserId, noticeData) => noticeModel.updateNotice(id, wardenUserId, noticeData);
+
+const deleteNotice = (id) => noticeModel.deleteNotice(id);
+
 module.exports = {
+    updateNotice,
+    deleteNotice,
     signUpload,
     createNotice,
     getNotices,

@@ -14,5 +14,9 @@ router.post('/uploads/sign', authorize('warden'),
     noticeValidation.validateUpload, noticeController.signUpload);
 router.post('/', authorize('warden'),
     noticeValidation.validateCreate, noticeController.createNotice);
+router.put('/:id', authorize('warden'), noticeValidation.validateNoticeId,
+    noticeValidation.validateCreate, noticeController.updateNotice);
+router.delete('/:id', authorize('warden'), noticeValidation.validateNoticeId,
+    noticeController.deleteNotice);
 
 module.exports = router;

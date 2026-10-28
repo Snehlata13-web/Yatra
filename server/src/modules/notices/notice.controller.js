@@ -49,7 +49,31 @@ const getNoticeById = async (req, res) => {
     }
 };
 
+const updateNotice = async (req, res) => {
+    try {
+        res.status(200).json({
+            success: true,
+            data: await noticeService.updateNotice(req.params.id, req.user.id, req.body)
+        });
+    } catch (error) {
+        handleError(res, error);
+    }
+};
+
+const deleteNotice = async (req, res) => {
+    try {
+        res.status(200).json({
+            success: true,
+            data: await noticeService.deleteNotice(req.params.id)
+        });
+    } catch (error) {
+        handleError(res, error);
+    }
+};
+
 module.exports = {
+    updateNotice,
+    deleteNotice,
     signUpload,
     createNotice,
     getNotices,
