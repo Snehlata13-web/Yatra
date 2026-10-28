@@ -14,15 +14,32 @@ const foodRoutes = require('./modules/food/food.routes.js');
 const noticeRoutes = require('./modules/notices/notice.routes.js');
 const attendanceRoutes = require('./modules/attendance/attendance.routes.js');
 const { apiRateLimiter } = require('./middleware/rate-limit.middleware.js');
+const cors = require('cors'); 
 const { logger } = require('./utils/logger.js');
 const app = express();
 app.set('trust proxy', 1);
 const port = process.env.PORT || 3000;
 
-const allowedOrigins = (process.env.FRONTEND_ORIGIN || 'http://localhost:5173')
+const allowedOrigins = (
+  process.env.FRONTEND_ORIGIN ||
+  'https://yatra-frontend-a0zb.onrender.com,http://localhost:5173'
+)
   .split(',')
   .map((origin) => origin.trim())
   .filter(Boolean);
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error(`CORS blocked origin: ${origin}`));
+  },
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  maxAge: 600,
+}));
 
 app.use((req, res, next) => {
   const origin = req.headers.origin;
