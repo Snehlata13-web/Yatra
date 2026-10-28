@@ -27,6 +27,10 @@ Apply `supabase/migrations/20261028_create_notices.sql` to create the notices ta
 
 At most five attachments are accepted. Images are limited to 10 MB each; videos to 50 MB each. Supported MIME types are JPEG, PNG, WebP, GIF, MP4, WebM, and QuickTime. This checkout has no React client, so the endpoints are ready for a frontend but no warden notice screen is included here.
 
+## Food reviews
+
+Students submit a review with `POST /api/v1/food/reviews`, using `meal_type` of `breakfast`, `lunch`, `snacks`, or `dinner`, and a `review` string. `review_date` is optional and defaults to today. Students can list their own reviews with `GET /api/v1/food/reviews/me`; admins and wardens can list all students' reviews with `GET /api/v1/food/reviews`. Both list routes accept optional `date=YYYY-MM-DD` and `meal_type` filters. `GET /api/v1/food/reviews/:id` is available to the review owner, admins, and wardens. Student updates remain owner-only.
+
 Warden registration additionally requires `employee_id`, `phone_number`, and `hostel_block`; these values are validated and saved to the related `wardens` row.
 
 Guard registration additionally requires `employee_id` and `gate_number`; these values are validated and saved to the related `guards` row. Staff accounts stay pending until admin approval.

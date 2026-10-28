@@ -6,11 +6,16 @@ const { authorize } = require('../../middleware/role.middleware.js');
 
 const router = express.Router();
 
-router.use(authenticate, authorize('student'));
-router.post('/reviews', foodValidation.validateReview, foodController.createReview);
-router.get('/reviews', foodValidation.validateDateQuery, foodController.getReviews);
-router.get('/reviews/:id', foodValidation.validateReviewId, foodController.getReview);
-router.put('/reviews/:id', foodValidation.validateReviewId,
+router.use(authenticate);
+router.post('/reviews', authorize('student'),
+    foodValidation.validateReview, foodController.createReview);
+router.get('/reviews/me', authorize('student'),
+    foodValidation.validateDateQuery, foodController.getMyReviews);
+router.get('/reviews', authorize('admin', 'warden'),
+    foodValidation.validateDateQuery, foodController.getAllReviews);
+router.get('/reviews/:id', authorize('student', 'admin', 'warden'),
+    foodValidation.validateReviewId, foodController.getReview);
+router.put('/reviews/:id', authorize('student'), foodValidation.validateReviewId,
     foodValidation.validateReview, foodController.updateReview);
 
 module.exports = router;

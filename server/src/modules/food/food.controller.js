@@ -16,11 +16,28 @@ const createReview = async (req, res) => {
     }
 };
 
-const getReviews = async (req, res) => {
+const getMyReviews = async (req, res) => {
     try {
         res.status(200).json({
             success: true,
-            data: await foodService.getReviews(req.user.id, req.query.date)
+            data: await foodService.getMyReviews(req.user.id, {
+                reviewDate: req.query.date,
+                mealType: req.query.meal_type
+            })
+        });
+    } catch (error) {
+        handleError(res, error);
+    }
+};
+
+const getAllReviews = async (req, res) => {
+    try {
+        res.status(200).json({
+            success: true,
+            data: await foodService.getAllReviews({
+                reviewDate: req.query.date,
+                mealType: req.query.meal_type
+            })
         });
     } catch (error) {
         handleError(res, error);
@@ -31,7 +48,9 @@ const getReview = async (req, res) => {
     try {
         res.status(200).json({
             success: true,
-            data: await foodService.getReview(req.user.id, req.params.id)
+            data: req.user.role === 'student'
+                ? await foodService.getMyReview(req.user.id, req.params.id)
+                : await foodService.getReview(req.params.id)
         });
     } catch (error) {
         handleError(res, error);
@@ -51,7 +70,8 @@ const updateReview = async (req, res) => {
 
 module.exports = {
     createReview,
-    getReviews,
+    getMyReviews,
+    getAllReviews,
     getReview,
     updateReview
 };

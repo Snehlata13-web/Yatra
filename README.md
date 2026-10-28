@@ -33,6 +33,10 @@ Routes are mounted under `/api/v1`:
 - `/passes`, `/approvals`, `/wardens`, `/guards` — pass approvals and gate workflow
 - `/complaints`, `/food`, `/notices` — supporting student services and warden announcements
 
+### Food reviews
+
+Students submit one review payload per meal using `POST /api/v1/food/reviews` with `meal_type` set to `breakfast`, `lunch`, `snacks`, or `dinner`, plus `review` and optional `review_date` (`YYYY-MM-DD`). Students can read only their own reviews at `GET /api/v1/food/reviews/me` and `GET /api/v1/food/reviews/:id`. Admins and wardens can view all students' reviews at `GET /api/v1/food/reviews` or `GET /api/v1/food/reviews/:id`. Both list endpoints accept optional `date` and `meal_type` filters.
+
 Most endpoints require a bearer token from `/auth/login`. Endpoints also enforce role authorization; see the route files under `server/src/modules/` for exact methods, paths, and role access.
 
 ### Student registration

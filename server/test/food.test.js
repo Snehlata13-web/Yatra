@@ -38,4 +38,12 @@ test('rejects invalid food review input', () => {
         student_id: 'another-student'
     }), 400);
     assert.equal(execute(validation.validateDateQuery, {}, {}, { date: '26-10-2026' }), 400);
+    assert.equal(execute(validation.validateDateQuery, {}, {}, { meal_type: 'tea' }), 400);
+});
+
+test('accepts meal type and date filters for review lists', () => {
+    assert.equal(execute(validation.validateDateQuery, {}, {}, {
+        date: '2026-10-26',
+        meal_type: 'breakfast'
+    }), 'next');
 });

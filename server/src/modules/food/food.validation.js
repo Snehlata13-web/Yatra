@@ -52,6 +52,9 @@ const validateDateQuery = (req, res, next) => {
             Number.isNaN(Date.parse(`${req.query.date}T00:00:00Z`)))) {
         return badRequest(res, 'date must be a valid YYYY-MM-DD date');
     }
+    if (req.query.meal_type !== undefined && !mealTypes.includes(req.query.meal_type)) {
+        return badRequest(res, 'meal_type must be breakfast, lunch, snacks, or dinner');
+    }
     next();
 };
 

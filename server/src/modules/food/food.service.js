@@ -15,14 +15,27 @@ const createReview = async (userId, reviewData) => {
     return foodModel.createReview(student.id, reviewData);
 };
 
-const getReviews = async (userId, reviewDate) => {
+const getMyReviews = async (userId, { reviewDate, mealType }) => {
     const student = await getStudentOrThrow(userId);
-    return foodModel.getReviews(student.id, reviewDate);
+    return foodModel.getReviews({ studentId: student.id, reviewDate, mealType });
 };
 
-const getReview = async (userId, id) => {
+const getAllReviews = ({ reviewDate, mealType }) =>
+    foodModel.getReviews({ reviewDate, mealType });
+
+const getMyReview = async (userId, id) => {
     const student = await getStudentOrThrow(userId);
-    const review = await foodModel.getReviewById(student.id, id);
+    const review = await foodModel.getReviewById(id, student.id);
+    if (!review) {
+        const error = new Error('Food review not found');
+        error.statusCode = 404;
+        throw error;
+    }
+    return review;
+};
+
+const getReview = async (id) => {
+    const review = await foodModel.getReviewById(id);
     if (!review) {
         const error = new Error('Food review not found');
         error.statusCode = 404;
@@ -38,7 +51,9 @@ const updateReview = async (userId, id, reviewData) => {
 
 module.exports = {
     createReview,
-    getReviews,
+    getMyReviews,
+    getAllReviews,
+    getMyReview,
     getReview,
     updateReview
 };
