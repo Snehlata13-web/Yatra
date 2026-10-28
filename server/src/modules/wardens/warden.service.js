@@ -62,7 +62,12 @@ const getPassById = async (id) => {
     return pass;
 }
 
+const getStudentAccounts = () => wardenModel.getStudentAccounts();
+const deleteStudentAccount = (userId) => wardenModel.deleteStudentAccount(userId);
+
 module.exports = {
+    getStudentAccounts,
+    deleteStudentAccount,
     getPendingStudentRegistrations,
     decideStudentRegistration,
     approvePass,

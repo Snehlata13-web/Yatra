@@ -166,7 +166,25 @@ const getAllPasses = async (req, res) => {
     }
 }
 
+const getStudentAccounts = async (req, res) => {
+    try {
+        res.status(200).json({ success: true, data: await wardenService.getStudentAccounts() });
+    } catch (error) {
+        res.status(error.statusCode || 500).json({ success: false, message: error.message });
+    }
+};
+
+const deleteStudentAccount = async (req, res) => {
+    try {
+        res.status(200).json({ success: true, data: await wardenService.deleteStudentAccount(req.params.userId) });
+    } catch (error) {
+        res.status(error.statusCode || 500).json({ success: false, message: error.message });
+    }
+};
+
 module.exports = {
+    getStudentAccounts,
+    deleteStudentAccount,
     getPendingStudentRegistrations,
     decideStudentRegistration,
     approvePass,
